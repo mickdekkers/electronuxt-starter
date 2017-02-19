@@ -35,7 +35,7 @@ const installIfNeeded = () => {
     if (missingNodeModules) {
       console.log('Preparing app for first time use...')
       const installProc = cp.spawn('npm', ['install'], {stdio: 'inherit', cwd: nuxtDir})
-      installProc.on('error', (err) => console.error(`Failed installing node_modules: ${error}`))
+      installProc.on('error', (err) => console.error(`Failed installing node_modules: ${err}`))
       installProc.on('close', buildIfNeeded)
     } else {
       console.log('Node modules found. Skipping installation: running build')
@@ -49,7 +49,7 @@ const buildIfNeeded = () => {
     if (missingDist) {
       console.log('Building Nuxt app...')
       const buildProc = cp.spawn('npm', ['run', 'build'], {stdio: 'inherit', cwd: nuxtDir})
-      buildProc.on('error', err => console.error(`Failed building Nuxt app: ${error}`))
+      buildProc.on('error', err => console.error(`Failed building Nuxt app: ${err}`))
       buildProc.on('exit', runServer)
     } else {
       console.log('Nuxt already built. Skipping build: running server...')
@@ -65,7 +65,7 @@ const runServer = err => {
   pollServer()
   const env = Object.assign({}, process.env, {NODE_ENV: 'production'})
   const serverProc = cp.spawn('npm', ['run', 'start'], {stdio: [0, 1, 2, 'ipc'], cwd: nuxtDir, env})
-  serverProc.on('error', err => console.error(`Failed running Nuxt server: ${error}`))
+  serverProc.on('error', err => console.error(`Failed running Nuxt server: ${err}`))
   serverProc.on('exit', code => !err && console.log('Goodbye.'))
 }
 
