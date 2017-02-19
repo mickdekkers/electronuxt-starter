@@ -8,5 +8,8 @@
   "license": "MIT",
   "scripts": {
     "start": "electron main.js"
+  },
+  "dependencies": {
+    "electron": "^1.4.15"
   }
 }
