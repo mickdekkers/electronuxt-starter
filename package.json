@@ -1,0 +1,12 @@
+{
+  "name": "electronuxt",
+  "version": "1.0.0",
+  "description": "Create an Electron app that serves a Nuxt.js app",
+  "main": "main.js",
+  "repository": "git@github.com:detrohutt/electronuxt.git",
+  "author": "Alexander Roberts <detrohutt@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron main.js"
+  }
+}
