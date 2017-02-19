@@ -25,6 +25,10 @@ const fs = require('fs')
 const cp = require('child_process')
 
 const nuxtDir = `${__dirname}/nuxt/`
+const http = require('http')
+const npm = require('npm')
+
+const POLL_INTERVAL = 100
 
 const installIfNeeded = () => {
   fs.access(`${nuxtDir}node_modules/`, fs.constants.F_OK, missingNodeModules => {
@@ -58,11 +62,19 @@ const runServer = err => {
   if (err) return console.error(err);
 
   console.log('Starting Nuxt server...')
+  pollServer()
   const env = Object.assign({}, process.env, {NODE_ENV: 'production'})
-  const serverProc = cp.fork('./start', {stdio: [0, 1, 2, 'ipc'], cwd: nuxtDir, env})
+  const serverProc = cp.spawn('npm', ['run', 'start'], {stdio: [0, 1, 2, 'ipc'], cwd: nuxtDir, env})
   serverProc.on('error', err => console.error(`Failed running Nuxt server: ${error}`))
-  serverProc.on('message', (m) => m.running && win.loadURL('http://localhost:3000'))
   serverProc.on('exit', code => !err && console.log('Goodbye.'))
+}
+
+const pollServer = () => {
+  http.get('http://localhost:3000', (res) => {
+    const SERVER_DOWN = res.statusCode !== 200
+    SERVER_DOWN ? setTimeout(pollServer, POLL_INTERVAL) : win.loadURL('http://localhost:3000')
+    res.read()
+  }).on('error', pollServer)
 }
 
 installIfNeeded()
