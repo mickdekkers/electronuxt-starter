@@ -43,7 +43,6 @@ const installIfNeeded = () => {
 const buildIfNeeded = () => {
   fs.access(`${nuxtDir}.nuxt/dist/`, fs.constants.F_OK, (missingDist) => {
     if (missingDist) {
-      // console.error(missingDist)
       console.log('Building Nuxt app...')
       const buildProc = cp.spawn('npm', ['run', 'build'], {stdio: 'inherit', cwd: nuxtDir})
       buildProc.on('error', err => console.error(`Failed building Nuxt app: ${error}`))
@@ -59,8 +58,10 @@ const runServer = err => {
   if (err) return console.error(err);
 
   console.log('Starting Nuxt server...')
-  const serverProc = cp.spawn('npm', ['run', 'start'], {stdio: 'inherit', cwd: nuxtDir})
+  const env = Object.assign({}, process.env, {NODE_ENV: 'production'})
+  const serverProc = cp.fork('./start', {stdio: [0, 1, 2, 'ipc'], cwd: nuxtDir, env})
   serverProc.on('error', err => console.error(`Failed running Nuxt server: ${error}`))
+  serverProc.on('message', (m) => m.running && win.loadURL('http://localhost:3000'))
   serverProc.on('exit', code => !err && console.log('Goodbye.'))
 }
 
