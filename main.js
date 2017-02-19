@@ -26,7 +26,6 @@ const cp = require('child_process')
 
 const nuxtDir = `${__dirname}/nuxt/`
 const http = require('http')
-const npm = require('npm')
 
 const POLL_INTERVAL = 100
 
